@@ -34,7 +34,7 @@ helpers do
 
     unless data == 'test'
       happening = ""
-      data.each do |key| 
+      JSON.parse(data).each do |key| 
         happening.concat("#{key}")
       end
       logger.info happening
