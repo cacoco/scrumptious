@@ -16,7 +16,7 @@ helpers do
   def handle_action(action)
     vault_room = Vault.new
     
-    time = Time.at(params[:time])
+    time = params[:time]
     resource = params[:resource]
     data = params[:data]
     if 'create' == action
@@ -37,7 +37,7 @@ helpers do
       data.each do |key| 
         happening.concat("#{key}")
       end
-      vault_room.send_message "[scrumy: #{time.strftime("%B %d, %Y %H:%M:%S+%Z")}] #{action}#{resource}: #{happening}."
+      vault_room.send_message "[scrumy: #{Time.now.strftime("%B %d, %Y %H:%M:%S+%Z")}] #{action}#{resource}: #{happening}."
     end
   end
 end
