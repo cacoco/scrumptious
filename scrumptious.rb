@@ -37,7 +37,8 @@ helpers do
       data.each do |key| 
         happening.concat("#{key}")
       end
-      vault_room.send_message "[scrumy: #{Time.now.strftime("%B %d, %Y %H:%M:%S+%Z")}] #{action}#{resource}: #{happening}."
+      logger.info happening
+      vault_room.send_message "[scrumy: #{Time.now.strftime("%B %d, %Y %H:%M:%S+%Z")}] #{action}#{resource}."
     end
   end
 end
