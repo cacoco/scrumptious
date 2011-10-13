@@ -16,7 +16,7 @@ helpers do
   def handle_action(action)
     vault_room = Vault.new
     
-    time = params[:time]
+    time = Time.at(params[:time])
     resource = params[:resource]
     data = params[:data]
     if 'create' == action
@@ -33,16 +33,19 @@ helpers do
     logger.info data 
 
     unless data == 'test'
-      # happening = data.each { |key| key + ":" + data[key] }
-      vault_room.send_paste "[scrumy:#{time}] #{resource}: #{action}."
+      happening = ""
+      data.each do |key| 
+        happening.concat("#{key}")
+      end
+      vault_room.send_message "[scrumy: #{time.strftime("%B %d, %Y %H:%M:%S+%Z")}] #{action}#{resource}: #{happening}."
     end
   end
 end
 
 class Vault
-  
+  # scrumy user
   def initialize
-    @campfire = Tinder::Campfire.new 'blossom', :token => '92495545a65d2a586d3fcb2e7b0553ff7ce47c1a', :ssl => true
+    @campfire = Tinder::Campfire.new 'blossom', :token => '1cc307903657e740fab0492f26d4468dd7fb9d64', :ssl => true
     @room = @campfire.find_room_by_id(412680)
     @room.join
   end 
