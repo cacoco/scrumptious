@@ -33,7 +33,8 @@ helpers do
     logger.info data 
 
     unless data == 'test'
-      vault_room.send_paste "[scrumy:#{time}] #{story}: #{action} => #{data}."
+      happening = data.each { |key| key + ":" + data[key] }
+      vault_room.send_paste "[scrumy:#{time}] #{story}: #{action} => #{happening}."
     end
   end
 end
