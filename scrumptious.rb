@@ -32,7 +32,7 @@ helpers do
     logger.info resource
     logger.info data 
 
-    unless json == 'test'
+    unless data == 'test'
       vault_room.send_paste "[scrumy:#{time}] #{story}: #{action} => #{data}."
     end
   end
