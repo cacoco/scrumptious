@@ -47,11 +47,11 @@ class Vault
     @room.join
   end 
   
-  def self.send_message(message, options = {})
+  def send_message(message, options = {})
     @room.speak message 
   end
   
-  def self.send_paste(message, options = {})
+  def send_paste(message, options = {})
     @room.paste message
   end
 end
