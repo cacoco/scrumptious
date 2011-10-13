@@ -34,7 +34,7 @@ helpers do
 
     unless data == 'test'
       happening = data.each { |key| key + ":" + data[key] }
-      vault_room.send_paste "[scrumy:#{time}] #{story}: #{action} => #{happening}."
+      vault_room.send_paste "[scrumy:#{time}] #{resource}: #{action}."
     end
   end
 end
