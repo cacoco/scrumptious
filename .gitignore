@@ -3,4 +3,5 @@
 *.ids
 *.idea
 *.vimrc
+.bundle
 tmp

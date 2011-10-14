@@ -1,9 +1,9 @@
 require 'json'
+require 'rest_client'
 require 'sinatra/base'
 
 class Scrumptious < Sinatra::Base
   SCRUMY_API_URL = 'https://scrumy.com/api'
-
   set :haml, :format => :html5
 
   get "/" do
@@ -37,45 +37,25 @@ class Scrumptious < Sinatra::Base
       logger.info data
 
       unless data == 'test'
-        #happening = ""
-        #JSON.parse(data).each do |key|
-        #  happening.concat("#{key}")
-        #end
-        #logger.info happening
-        puts "[#{Time.now.strftime("%B %d, %Y %H:%M:%S+%Z")}] #{resource}(#{id}) => #{action} []."
-        #vault_room.send_message "[#{Time.now.strftime("%B %d, %Y %H:%M:%S+%Z")}] #{resource}(#{id}) => #{action} []."
+        json = JSON.parse(data)
+        message = "[#{Time.now.strftime("%B %d, %Y %H:%M:%S")}] #{resource.capitalize} [#{id}] was #{Inflectionist.past_tensed(action)}. "
+        json.each do |key, value|
+          if value.kind_of?(Array)
+            message << "#{key.capitalize} changed: [#{value[0]} => #{value[1]}]"
+          else
+            message << "#{key.capitalize} changed: [#{value}]"
+          end
+        end
+        puts message
+        #vault_room.send_message "The following is a test."
+        vault_room.send_message message
       end
     end
   end
 end
 
-
-# 2011-10-13T01:28:42+00:00 heroku[router]: GET radiant-stone-9315.herokuapp.com/favicon.ico dyno=web.1 queue=0 wait=0ms service=6ms status=404 bytes=465
-# 2011-10-13T01:28:42+00:00 app[web.1]: 204.14.152.118 - - [13/Oct/2011 01:28:42] "GET /favicon.ico HTTP/1.1" 404 465 0.0022
-# 2011-10-13T01:28:49+00:00 app[web.1]: I, [2011-10-13T01:28:49.823027 #1]  INFO -- : update
-# 2011-10-13T01:28:49+00:00 app[web.1]: I, [2011-10-13T01:28:49.823171 #1]  INFO -- : 1318469329
-# 2011-10-13T01:28:49+00:00 app[web.1]: I, [2011-10-13T01:28:49.823202 #1]  INFO -- : task
-# 2011-10-13T01:28:49+00:00 app[web.1]: I, [2011-10-13T01:28:49.823224 #1]  INFO -- : {"state":["inprogress","todo"]}
-# 2011-10-13T01:28:49+00:00 app[web.1]: I, [2011-10-13T01:28:49.823288 #1]  INFO -- : ["state", ["inprogress", "todo"]]
-# 2011-10-13T01:28:50+00:00 heroku[router]: POST radiant-stone-9315.herokuapp.com/ dyno=web.1 queue=0 wait=0ms service=928ms status=200 bytes=189
-# 2011-10-13T01:28:50+00:00 app[web.1]: 173.45.231.183 - - [13/Oct/2011 01:28:50] "POST / HTTP/1.1" 200 - 0.9068
-# 2011-10-13T01:28:56+00:00 app[web.1]: I, [2011-10-13T01:28:56.441042 #1]  INFO -- : update
-# 2011-10-13T01:28:56+00:00 app[web.1]: I, [2011-10-13T01:28:56.441165 #1]  INFO -- : 1318469181
-# 2011-10-13T01:28:56+00:00 app[web.1]: I, [2011-10-13T01:28:56.441195 #1]  INFO -- : task
-# 2011-10-13T01:28:56+00:00 app[web.1]: I, [2011-10-13T01:28:56.441218 #1]  INFO -- : {"state":["inprogress","todo"]}
-# 2011-10-13T01:28:56+00:00 app[web.1]: I, [2011-10-13T01:28:56.441276 #1]  INFO -- : ["state", ["inprogress", "todo"]]
-# 2011-10-13T01:28:56+00:00 heroku[router]: POST radiant-stone-9315.herokuapp.com/ dyno=web.1 queue=0 wait=0ms service=1499ms status=200 bytes=189
-# 2011-10-13T01:28:56+00:00 app[web.1]: 173.45.231.183 - - [13/Oct/2011 01:28:56] "POST / HTTP/1.1" 200 - 1.4954
-# 2011-10-13T01:28:58+00:00 app[web.1]: I, [2011-10-13T01:28:58.417793 #1]  INFO -- : update
-# 2011-10-13T01:28:58+00:00 app[web.1]: I, [2011-10-13T01:28:58.417931 #1]  INFO -- : 1318469262
-# 2011-10-13T01:28:58+00:00 app[web.1]: I, [2011-10-13T01:28:58.417986 #1]  INFO -- : task
-# 2011-10-13T01:28:58+00:00 app[web.1]: I, [2011-10-13T01:28:58.418075 #1]  INFO -- : {"state":["todo","inprogress"]}
-# 2011-10-13T01:28:58+00:00 app[web.1]: I, [2011-10-13T01:28:58.418171 #1]  INFO -- : ["state", ["todo", "inprogress"]]
-# 2011-10-13T01:28:58+00:00 heroku[router]: POST radiant-stone-9315.herokuapp.com/ dyno=web.1 queue=0 wait=0ms service=987ms status=200 bytes=189
-# 2011-10-13T01:28:58+00:00 app[web.1]: 173.45.231.183 - - [13/Oct/2011 01:28:58] "POST / HTTP/1.1" 200 - 0.9826
-
 class Vault
-  # scrumy user
+  # Scrumy campfire user, TODO: move config outside of application
   def initialize
     @campfire = Tinder::Campfire.new 'blossom', :token => '1cc307903657e740fab0492f26d4468dd7fb9d64', :ssl => true
     @room = @campfire.find_room_by_id(412680)
@@ -89,4 +69,51 @@ class Vault
   def send_paste(message, options = {})
     @room.paste message
   end
+end
+
+class Scrumy
+  def initialize(project, password)
+    @project, @password = project, password
+  end
+
+  protected
+      # `#get` provides the nuts and bolts for retrieving resources.  Give it a
+      # resource URL and a root key and it will return either an array of hashes
+      # at that root key or a single hash with values found at that key.
+      #
+      # For example if the resource returns `{"foo"=>{"id"=>1, "bar"=>"baz"}}`
+      # then `#get(some_url, "foo")` will return the value of `"foo"` from the hash:
+      # `{"id"=>1, "bar"=>"baz"}`.  This is important because later on in the models
+      # we assign all the values in the latter hash as instance variables on the
+      # model objects.
+      def get(url, root)
+        begin
+          # Start by creating a new `RestClient::Resource` authenticated with
+          # the `@project` name and `@password`.
+          resource = RestClient::Resource.new(url, @project, @password)
+
+          # `GET` the resource
+          resource.get {|response, request, result, &block|
+            case response.code
+            when 200
+              # and on success parse the response
+              json = JSON.parse(response.body)
+              # If it's `Array` then collect the hashes and flatten them on the `root` key.
+              if json.kind_of?(Array) && root
+                json.collect{|item|
+                  item[root]
+                }
+              else
+                # Otherwise just return the `Hash` at the root or the JSON itself directly.
+                root ? json[root] : json
+              end
+            else
+              response.return!(request, result, &block)
+            end
+          }
+        rescue => e
+          # Rescue and reraise with the current `@url` for debugging purposes
+          raise "Problem fetching #{@url} because #{e.message}"
+        end
+      end
 end
