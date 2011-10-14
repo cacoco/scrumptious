@@ -38,17 +38,19 @@ class Scrumptious < Sinatra::Base
 
       unless data == 'test'
         json = JSON.parse(data)
-        message = "[#{Time.now.strftime("%B %d, %Y %H:%M:%S")}] #{resource.capitalize} [#{id}] was #{Inflectionist.past_tensed(action)}. "
-        json.each do |key, value|
-          if value.kind_of?(Array)
-            message << "#{key.capitalize} changed: [#{value[0]} => #{value[1]}]"
-          else
-            message << "#{key.capitalize} changed: [#{value}]"
+        unless "order_task" == action  # don't care about this action
+          message = "[#{Time.now.strftime("%B %d, %Y %H:%M:%S")}] #{resource.capitalize} [#{id}] was #{Inflectionist.past_tensed(action)}. "
+          json.each do |key, value|
+            if value.kind_of?(Array)
+              message << "#{key.capitalize} changed: [#{value[0]} => #{value[1]}]"
+            else
+              message << "#{key.capitalize} changed: [#{value}]"
+            end
           end
+          puts message
+          #vault_room.send_message "The following is a test."
+          vault_room.send_message message
         end
-        puts message
-        #vault_room.send_message "The following is a test."
-        vault_room.send_message message
       end
     end
   end
