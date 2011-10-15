@@ -21,7 +21,7 @@ class Scrumptious < Sinatra::Base
 
   helpers do
     def handle_action(action)
-      #room = VaultRoom.new(settings.campfire_domain, settings.campfire_token)
+      room = VaultRoom.new(settings.campfire_domain, settings.campfire_token)
 
       time = params[:time]
       resource = params[:resource]
@@ -54,10 +54,8 @@ class Scrumptious < Sinatra::Base
               message << "#{key.capitalize} changed: [#{value}]"
             end
           end
-          puts message
-
-
-          #room.send_message message
+          logger.info message
+          room.send_message message
         end
       end
     end
