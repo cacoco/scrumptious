@@ -3,8 +3,13 @@ require 'rest_client'
 require 'sinatra/base'
 
 class Scrumptious < Sinatra::Base
-  SCRUMY_API_URL = 'https://scrumy.com/api'
   set :haml, :format => :html5
+
+  set :campfire_domain => ENV["CAMPFIRE_DOMAIN"]
+  set :campfire_token => ENV["CAMPFIRE_TOKEN"]
+
+  set :scrumy_project => ENV["SCRUMY_PROJECT"]
+  set :scrumy_password => ENV["SCRUMY_PASSWORD"]
 
   get "/" do
     haml :index
@@ -16,7 +21,7 @@ class Scrumptious < Sinatra::Base
 
   helpers do
     def handle_action(action)
-      vault_room = Vault.new
+      #room = VaultRoom.new(settings.campfire_domain, settings.campfire_token)
 
       time = params[:time]
       resource = params[:resource]
@@ -38,8 +43,10 @@ class Scrumptious < Sinatra::Base
 
       unless data == 'test'
         json = JSON.parse(data)
-        unless "order_task" == action  # don't care about this action
-          message = "[#{Time.now.strftime("%B %d, %Y %H:%M:%S")}] #{resource.capitalize} [#{id}] was #{Inflectionist.past_tensed(action)}. "
+        unless "order_tasks" == action  # don't care about this action
+          scrumy = Scrumy.new(settings.scrumy_project, settings.scrumy_password)
+          detail = scrumy.get_task_info(id)
+          message = "#{resource.capitalize} [#{detail["title"]}], assigned to: [#{detail["scrumer"]["name"]}] was #{Inflectionist.past_tensed(action)}. "
           json.each do |key, value|
             if value.kind_of?(Array)
               message << "#{key.capitalize} changed: [#{value[0]} => #{value[1]}]"
@@ -48,18 +55,19 @@ class Scrumptious < Sinatra::Base
             end
           end
           puts message
-          #vault_room.send_message "The following is a test."
-          vault_room.send_message message
+
+
+          #room.send_message message
         end
       end
     end
   end
 end
 
-class Vault
+class VaultRoom
   # Scrumy campfire user, TODO: move config outside of application
-  def initialize
-    @campfire = Tinder::Campfire.new 'blossom', :token => '1cc307903657e740fab0492f26d4468dd7fb9d64', :ssl => true
+  def initialize(domain, token)
+    @campfire = Tinder::Campfire.new domain, :token => token, :ssl => true
     @room = @campfire.find_room_by_id(412680)
     @room.join
   end
@@ -74,8 +82,14 @@ class Vault
 end
 
 class Scrumy
+  SCRUMY_API_URL = 'https://scrumy.com/api'
+
   def initialize(project, password)
     @project, @password = project, password
+  end
+
+  def get_task_info(id)
+    self.get("https://scrumy.com/api/tasks/#{id}.json", "task")
   end
 
   protected
@@ -92,7 +106,7 @@ class Scrumy
         begin
           # Start by creating a new `RestClient::Resource` authenticated with
           # the `@project` name and `@password`.
-          resource = RestClient::Resource.new(url, @project, @password)
+          resource = RestClient::Resource.new url, {:user => @project, :password => @password}
 
           # `GET` the resource
           resource.get {|response, request, result, &block|
