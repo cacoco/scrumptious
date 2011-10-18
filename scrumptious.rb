@@ -22,9 +22,7 @@ class Scrumptious < Sinatra::Base
 
   helpers do
     def handle
-      logger.info settings.campfire_domain, settings.campfire_token, settings.campfire_room
-      room = Campfire::Room.new(settings.campfire_domain, settings.campfire_token, settings.campfire_room)
-      logger.info room
+      room = Campfire::Room.new settings.campfire_domain, settings.campfire_token, settings.campfire_room
 
       action = params[:action]
       resource = params[:resource]
