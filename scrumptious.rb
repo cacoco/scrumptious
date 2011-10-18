@@ -22,7 +22,7 @@ class Scrumptious < Sinatra::Base
 
   helpers do
     def handle(action)
-      room = Campfire::Room.new(settings.campfire_domain,
+      room = Tinder::Campfire::Room.new(settings.campfire_domain,
                           settings.campfire_token,
                           settings.campfire_room)
 
