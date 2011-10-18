@@ -29,15 +29,6 @@ class Scrumptious < Sinatra::Base
       resource = params[:resource]
       data = params[:data]
       id = params[:id]
-      if 'create' == action
-        logger.info action
-      elsif 'update' == action
-        logger.info action
-      elsif 'order_tasks' == action
-        logger.info action
-      elsif 'destroy' == action
-        logger.info action
-      end
 
       unless data == 'test'
         json = JSON.parse data
@@ -68,7 +59,7 @@ module Campfire
   class Room
     def initialize(domain, options = {})
       @campfire = Tinder::Campfire.new(domain, options)
-      @room = @campfire.find_room_by_name("The Vault")
+      @room = @campfire.find_room_by_id(options[:id])
     end
 
     def send_message(message, options = {})
