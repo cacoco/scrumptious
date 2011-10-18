@@ -25,6 +25,7 @@ class Scrumptious < Sinatra::Base
       room = Tinder::Campfire::Room.new(settings.campfire_domain,
                           settings.campfire_token,
                           settings.campfire_room)
+      logger.info room
 
       resource = params[:resource]
       data = params[:data]
