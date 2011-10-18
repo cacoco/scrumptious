@@ -31,24 +31,27 @@ class Scrumptious < Sinatra::Base
       id = params[:id]
 
       unless data == 'test'
-        json = JSON.parse data
+        # for now only care about tasks
+        if resource == 'task'
+          json = JSON.parse data
 
-        unless "order_tasks" == action  # don't care about this action
-          key = json.keys.first
-          value = json[key]
+          unless "order_tasks" == action  # don't care about this action
+            key = json.keys.first
+            value = json[key]
 
-          if value.kind_of?(Array)
-            change = "#{key.capitalize} changed: [#{value[0]} => #{value[1]}]"
-          else
-            change = "#{key.capitalize} changed: [#{value}]"
+            if value.kind_of?(Array)
+              change = "#{key.capitalize} changed: [#{value[0]} => #{value[1]}]"
+            else
+              change = "#{key.capitalize} changed: [#{value}]"
+            end
+
+            scrumy = Scrumy::Client.new(settings.scrumy_project, settings.scrumy_password)
+            detail = scrumy.get_info(id, resource)
+            message = "#{resource.capitalize} [#{detail["title"]}] assigned to: [#{detail["scrumer"]["name"]}] was #{Inflectionist.past_tensed(action)}. #{change}"
+
+            logger.info message
+            room.send_message message
           end
-
-          scrumy = Scrumy::Client.new(settings.scrumy_project, settings.scrumy_password)
-          detail = scrumy.get_info(id, resource)
-          message = "#{resource.capitalize} [#{detail["title"]}] assigned to: [#{detail["scrumer"]["name"]}] was #{Inflectionist.past_tensed(action)}. #{change}"
-
-          logger.info message
-          room.send_message message
         end
       end
     end
