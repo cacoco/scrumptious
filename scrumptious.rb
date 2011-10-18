@@ -22,7 +22,7 @@ class Scrumptious < Sinatra::Base
 
   helpers do
     def handle
-      room = Campfire::Room.new settings.campfire_domain, settings.campfire_token, settings.campfire_room
+      room = Campfire::Room.new settings.campfire_domain, :id => settings.campfire_room, :token => settings.campfire_token, :ssl => true
 
       action = params[:action]
       resource = params[:resource]
@@ -65,9 +65,9 @@ end
 
 module Campfire
   class Room
-    def initialize(domain, token, room)
-      @campfire = Tinder::Campfire.new domain, :token => token, :ssl => true
-      @room = @campfire.find_room_by_id(room)
+    def initialize(domain, options = {})
+      @campfire = Tinder::Campfire.new domain, options
+      @room = @campfire.find_room_by_id(options[:id])
       @room.join
     end
 
