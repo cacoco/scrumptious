@@ -17,16 +17,16 @@ class Scrumptious < Sinatra::Base
   end
 
   post "/" do
-    handle(params[:action])
+    handle
   end
 
   helpers do
-    def handle(action)
-      room = Tinder::Campfire::Room.new(settings.campfire_domain,
-                          settings.campfire_token,
-                          settings.campfire_room)
+    def handle
+      logger.info settings.campfire_domain, settings.campfire_token, settings.campfire_room
+      room = Campfire::Room.new(settings.campfire_domain, settings.campfire_token, settings.campfire_room)
       logger.info room
 
+      action = params[:action]
       resource = params[:resource]
       data = params[:data]
       id = params[:id]
