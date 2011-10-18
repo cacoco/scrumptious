@@ -22,6 +22,7 @@ class Scrumptious < Sinatra::Base
 
   helpers do
     def handle
+      puts settings.campfire_token
       room = Campfire::Room.new settings.campfire_domain, :id => settings.campfire_room, :token => settings.campfire_token, :ssl => true
 
       action = params[:action]
