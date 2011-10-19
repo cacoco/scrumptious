@@ -62,7 +62,7 @@ module Campfire
   class Room
     def initialize(domain, options = {})
       @campfire = Tinder::Campfire.new(domain, options)
-      @room = @campfire.find_room_by_id(options[:id])
+      @room = @campfire.find_room_by_id(options[:id].to_i)
     end
 
     def send_message(message, options = {})
