@@ -1,5 +1,7 @@
 require 'active_support/inflector'
 
+# Culled from https://github.com/parolkar/inflectionist
+# Copyright (c) 2009 Er Abhishek Parolkar, released under the MIT license
 ActiveSupport::Inflector::Inflections.instance.instance_eval do
   def past_tenses
     @past_tenses

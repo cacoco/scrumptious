@@ -91,18 +91,10 @@ module Scrumy
     end
 
     protected
-    # `#get` provides the nuts and bolts for retrieving resources.  Give it a
-    # resource URL and a root key and it will return either an array of hashes
-    # at that root key or a single hash with values found at that key.
-    #
-    # For example if the resource returns `{"foo"=>{"id"=>1, "bar"=>"baz"}}`
-    # then `#get(some_url, "foo")` will return the value of `"foo"` from the hash:
-    # `{"id"=>1, "bar"=>"baz"}`.  This is important because later on in the models
-    # we assign all the values in the latter hash as instance variables on the
-    # model objects.
+    # based on Jeff's work here: https://github.com/jeffremer/scrumy-client
     def get(url, root)
       begin
-        # Start by creating a new `RestClient::Resource` authenticated with
+        # Create a new `RestClient::Resource` authenticated with
         # the `@project` name and `@password`.
         resource = RestClient::Resource.new url, {:user => @project, :password => @password}
 
@@ -126,7 +118,6 @@ module Scrumy
           end
         }
       rescue => e
-        # Rescue and reraise with the current `@url` for debugging purposes
         raise "Problem fetching #{@url} because #{e.message}"
       end
     end
