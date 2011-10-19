@@ -12,3 +12,11 @@ Use the env.sample as an example of the 5 environment variables that need to be 
 ```EXPORT SCRUMY_PROJECT="project"```  
 ```EXPORT SCRUMY_PASSWORD="password"```  
 
+You can use [foreman](https://github.com/ddollar/foreman) to run this locally:  
+
+```foreman start```
+
+Or manually run thin:
+
+```bundle exec thin start```
+
