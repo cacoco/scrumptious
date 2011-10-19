@@ -1,8 +1,7 @@
 require 'active_support/inflector'
 
 ActiveSupport::Inflector::Inflections.instance.instance_eval do
-   # Keep in mind Inflections is a singleton, so what makes more sense is to inject our methods at run time to the instance
-  def past_tenses # a attr_reader
+  def past_tenses
     @past_tenses
   end
 
@@ -33,11 +32,12 @@ end
 module Inflectionist
   def self.past_tensed(word)
     result = word.to_s.dup
-
     if word.empty? || ActiveSupport::Inflector.inflections.uncountables.include?(result.downcase)
       result
     else
-      ActiveSupport::Inflector.inflections.past_tenses.each { |(rule, replacement)| break if result.gsub!(rule, replacement) }
+      ActiveSupport::Inflector.inflections.past_tenses.each do |(rule, replacement)| 
+        break if result.gsub!(rule, replacement)
+      end
       result
     end
   end
