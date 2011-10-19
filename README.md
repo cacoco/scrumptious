@@ -20,3 +20,11 @@ Or manually run thin:
 
 ```bundle exec thin start```
 
+### Thanks
+
+This project was only possible because of the exuberance of @jeffremer, thanks.
+
+### License
+
+Copyright (c) 2011 cacoco and released under an MIT license.
+
