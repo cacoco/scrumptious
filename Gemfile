@@ -7,4 +7,6 @@ gem 'sinatra', '1.3.1'
 gem 'activesupport', '3.1.1'
 gem 'thin'
 gem 'tinder'
+gem 'minitest', '2.7.0'
+gem 'rake', '0.9.2'
 gem 'rest-client', :git => "https://github.com/archiloque/rest-client.git"

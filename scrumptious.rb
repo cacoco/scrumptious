@@ -17,7 +17,6 @@ class Scrumptious < Sinatra::Base
   end
 
   post "/" do
-
     handle
   end
 
@@ -80,14 +79,14 @@ module Scrumy
     SCRUMY_API_URL = 'https://scrumy.com/api'
     FORMAT = 'json'
 
-    attr_reader :url
-
     def initialize(project, password)
       @project, @password = project, password
     end
 
     def get_info(id, resource)
-      self.get("#{SCRUMY_API_URL}/#{resource.pluralize}/#{id}.#{FORMAT}", resource)
+      url = "#{SCRUMY_API_URL}/#{resource.pluralize}/#{id}.#{FORMAT}"
+      logger.info "Retrieving [#{resource}] resource information from [#{url}]"
+      self.get(url, resource)
     end
 
     protected
@@ -118,7 +117,7 @@ module Scrumy
           end
         }
       rescue => e
-        raise "Problem fetching #{@url} because #{e.message}"
+        raise "Problem fetching #{url} because #{e.message}"
       end
     end
   end
