@@ -1,5 +1,7 @@
 # scrumptious
 
+[![Build Status](https://secure.travis-ci.org/cacoco/scrumptious.png)](http://travis-ci.org/cacoco/scrumptious)
+
 A simple webhook for [Scrumy](http://apidoc.scrumy.com/wiki/show/Webhooks "Scrumy web hooks api") that will listen for task changes and fire notifications to the configured [Campfire](http://campfirenow.com/) room.
 
 ## Usage
